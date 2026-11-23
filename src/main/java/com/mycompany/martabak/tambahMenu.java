@@ -11,7 +11,48 @@ package com.mycompany.martabak;
 public class tambahMenu extends javax.swing.JDialog {
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(tambahMenu.class.getName());
+    
+    private String tabelDb;
+private String kategori;
 
+public void setTarget(String tabelDb, String kategori) {
+    this.tabelDb = tabelDb;
+    this.kategori = kategori;
+}
+
+private void simpan() {
+    String nama = jTextField1.getText().trim();
+    String hargaTeks = jTextField2.getText().trim();
+
+    if (nama.isEmpty() || hargaTeks.isEmpty()) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Nama dan harga wajib diisi.");
+        return;
+    }
+
+    int harga;
+    try {
+        harga = Integer.parseInt(hargaTeks);
+    } catch (NumberFormatException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Harga harus berupa angka, contoh: 5000");
+        return;
+    }
+    if (harga <= 0) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Harga harus lebih dari 0.");
+        return;
+    }
+
+    String sql = "INSERT INTO " + tabelDb + " (kategori, nama, harga) VALUES (?, ?, ?)";
+    try (java.sql.Connection c = Koneksi.getKoneksi();
+         java.sql.PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setString(1, kategori);
+        ps.setString(2, nama);
+        ps.setInt(3, harga);
+        ps.executeUpdate();
+        dispose();
+    } catch (java.sql.SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
+    }
+}
     /**
      * Creates new form tBaseManis
      */
@@ -43,8 +84,10 @@ public class tambahMenu extends javax.swing.JDialog {
         jLabel2.setText("Harga");
 
         jButton1.setText("Batal");
+        jButton1.addActionListener(this::jButton1ActionPerformed);
 
         jButton2.setText("Selesai");
+        jButton2.addActionListener(this::jButton2ActionPerformed);
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
@@ -91,6 +134,14 @@ public class tambahMenu extends javax.swing.JDialog {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
+        simpan();
+    }//GEN-LAST:event_jButton2ActionPerformed
+
+    private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
+        dispose();
+    }//GEN-LAST:event_jButton1ActionPerformed
+
     /**
      * @param args the command line arguments
      */
@@ -136,4 +187,8 @@ public class tambahMenu extends javax.swing.JDialog {
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
     // End of variables declaration//GEN-END:variables
-}
+
+    
+} // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    
+
