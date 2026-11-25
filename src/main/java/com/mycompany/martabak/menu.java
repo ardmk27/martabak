@@ -382,6 +382,15 @@ public class menu extends javax.swing.JFrame {
         jMenuBar1.add(menu);
 
         riwayat.setText("Riwayat");
+        riwayat.addMenuListener(new javax.swing.event.MenuListener() {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuDeselected(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                riwayatMenuSelected(evt);
+            }
+        });
         jMenuBar1.add(riwayat);
 
         setJMenuBar(jMenuBar1);
@@ -394,7 +403,7 @@ public class menu extends javax.swing.JFrame {
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jLayeredPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)
+            .addComponent(jLayeredPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 380, Short.MAX_VALUE)
         );
 
         pack();
@@ -424,6 +433,15 @@ public class menu extends javax.swing.JFrame {
     private void tambahToppingTelorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tambahToppingTelorActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_tambahToppingTelorActionPerformed
+
+    private void riwayatMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_riwayatMenuSelected
+        com.mycompany.martabak.riwayat frameMenu = new com.mycompany.martabak.riwayat();
+
+        frameMenu.setLocationRelativeTo(null);
+        frameMenu.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_riwayatMenuSelected
 
     /**
      * @param args the command line arguments

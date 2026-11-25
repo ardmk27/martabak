@@ -3,12 +3,55 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.martabak;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author User
  */
 public class riwayat extends javax.swing.JFrame {
+    private static final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+private void muatRiwayat() {
+    LocalDate tgl;
+    try {
+        tgl = LocalDate.parse(txtTanggal.getText().trim(), FMT);
+    } catch (DateTimeParseException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Format tanggal harus dd/MM/yyyy.");
+        return;
+    }
+
+    DefaultTableModel m = new DefaultTableModel(new Object[]{"No", "Waktu", "Nama Pelanggan", "Pesanan", "Harga"}, 0) {
+        @Override public boolean isCellEditable(int r, int c) { return false; }
+    };
+
+    String sql = "SELECT p.id_pesanan, DATE_FORMAT(p.waktu, '%H:%i') AS waktu, p.nama_pelanggan, p.total, (SELECT GROUP_CONCAT(CONCAT(x.n, ' ', UPPER(LEFT(x.kategori, 1)), SUBSTRING(x.kategori, 2)) ORDER BY x.kategori SEPARATOR ', ') FROM (SELECT d.id_pesanan, b.kategori, COUNT(DISTINCT d.no_item) AS n FROM detail_pesanan d JOIN menu_base b ON b.id_base = d.id_base GROUP BY d.id_pesanan, b.kategori) x WHERE x.id_pesanan = p.id_pesanan) AS pesanan FROM pesanan p WHERE p.status = 1 AND DATE(p.waktu) = ? ORDER BY p.waktu";
+
+    int pendapatan = 0;
+    try (Connection c = Koneksi.getKoneksi(); PreparedStatement ps = c.prepareStatement(sql)) {
+        ps.setDate(1, java.sql.Date.valueOf(tgl));
+        try (ResultSet rs = ps.executeQuery()) {
+            int no = 1;
+            while (rs.next()) {
+                int total = rs.getInt("total");
+                pendapatan += total;
+                String pesanan = rs.getString("pesanan");
+                m.addRow(new Object[]{no++, rs.getString("waktu"), rs.getString("nama_pelanggan"), pesanan == null ? "-" : pesanan, total});
+            }
+        }
+    } catch (SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal ambil riwayat: " + e.getMessage());
+    }
+    tblRiwayat.setModel(m);
+    txtTotal.setText(String.valueOf(pendapatan));
+}
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(riwayat.class.getName());
 
@@ -17,6 +60,10 @@ public class riwayat extends javax.swing.JFrame {
      */
     public riwayat() {
         initComponents();
+        txtTanggal.setText(LocalDate.now().format(FMT));
+    txtTotal.setEditable(false);
+    txtTanggal.addActionListener(e -> muatRiwayat());
+    muatRiwayat();
     }
 
     /**
@@ -32,12 +79,16 @@ public class riwayat extends javax.swing.JFrame {
         mainPanel = new javax.swing.JPanel();
         jLabel1 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
-        tanggalField = new javax.swing.JTextField();
+        txtTanggal = new javax.swing.JTextField();
         jScrollPane2 = new javax.swing.JScrollPane();
-        jTable1 = new javax.swing.JTable();
+        tblRiwayat = new javax.swing.JTable();
         jLabel2 = new javax.swing.JLabel();
-        totalField = new javax.swing.JTextField();
+        txtTotal = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
+        jMenuBar1 = new javax.swing.JMenuBar();
+        pesanan = new javax.swing.JMenu();
+        menu = new javax.swing.JMenu();
+        riwayat = new javax.swing.JMenu();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -47,10 +98,10 @@ public class riwayat extends javax.swing.JFrame {
         jLabel1.setFont(new java.awt.Font("Bakso Sapi", 0, 18)); // NOI18N
         jLabel1.setText("Riwayat Pesanan");
 
-        tanggalField.setText("25/11/2026");
-        tanggalField.addActionListener(this::tanggalFieldActionPerformed);
+        txtTanggal.setText("25/11/2026");
+        txtTanggal.addActionListener(this::txtTanggalActionPerformed);
 
-        jTable1.setModel(new javax.swing.table.DefaultTableModel(
+        tblRiwayat.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -61,7 +112,7 @@ public class riwayat extends javax.swing.JFrame {
                 "No", "Waktu", "Nama Pelanggan", "Pesanan", "Harga"
             }
         ));
-        jScrollPane2.setViewportView(jTable1);
+        jScrollPane2.setViewportView(tblRiwayat);
 
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Total Pendapatan Harian");
@@ -75,7 +126,7 @@ public class riwayat extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(tanggalField, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, 75, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addGap(6, 6, 6)
                         .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
@@ -85,20 +136,20 @@ public class riwayat extends javax.swing.JFrame {
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(jLabel3)
                                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))))
+                                .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE)))))
                 .addContainerGap(15, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(tanggalField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addComponent(txtTanggal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 228, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel3))
                 .addGap(8, 8, 8))
         );
@@ -128,6 +179,38 @@ public class riwayat extends javax.swing.JFrame {
 
         jScrollPane1.setViewportView(mainPanel);
 
+        pesanan.setText("Pesanan");
+        pesanan.addMenuListener(new javax.swing.event.MenuListener() {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuDeselected(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                pesananMenuSelected(evt);
+            }
+        });
+        pesanan.addActionListener(this::pesananActionPerformed);
+        jMenuBar1.add(pesanan);
+
+        menu.setText("Menu");
+        menu.addMenuListener(new javax.swing.event.MenuListener() {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuDeselected(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                menuMenuSelected(evt);
+            }
+        });
+        menu.addActionListener(this::menuActionPerformed);
+        jMenuBar1.add(menu);
+
+        riwayat.setForeground(new java.awt.Color(0, 0, 153));
+        riwayat.setText("Riwayat");
+        jMenuBar1.add(riwayat);
+
+        setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -142,9 +225,35 @@ public class riwayat extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void tanggalFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_tanggalFieldActionPerformed
+    private void txtTanggalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTanggalActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_tanggalFieldActionPerformed
+    }//GEN-LAST:event_txtTanggalActionPerformed
+
+    private void menuMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_menuMenuSelected
+        com.mycompany.martabak.menu frameMenu = new com.mycompany.martabak.menu();
+
+        frameMenu.setLocationRelativeTo(null);
+        frameMenu.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_menuMenuSelected
+
+    private void pesananActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pesananActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pesananActionPerformed
+
+    private void menuActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_menuActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_menuActionPerformed
+
+    private void pesananMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_pesananMenuSelected
+        com.mycompany.martabak.pesanan frameMenu = new com.mycompany.martabak.pesanan();
+
+        frameMenu.setLocationRelativeTo(null);
+        frameMenu.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_pesananMenuSelected
 
     /**
      * @param args the command line arguments
@@ -175,12 +284,16 @@ public class riwayat extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
+    private javax.swing.JMenuBar jMenuBar1;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
-    private javax.swing.JTable jTable1;
     private javax.swing.JPanel mainPanel;
-    private javax.swing.JTextField tanggalField;
-    private javax.swing.JTextField totalField;
+    private javax.swing.JMenu menu;
+    private javax.swing.JMenu pesanan;
+    private javax.swing.JMenu riwayat;
+    private javax.swing.JTable tblRiwayat;
+    private javax.swing.JTextField txtTanggal;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }

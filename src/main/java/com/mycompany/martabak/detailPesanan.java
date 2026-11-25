@@ -275,10 +275,12 @@ public void muatDetail(int id) {
     }//GEN-LAST:event_jTextField6ActionPerformed
 
     private void bayarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_bayarActionPerformed
-        bayar dialog = new bayar(this, true);
+      
+    bayar dialog = new bayar(this, true);
+    dialog.setTotal(jTextField6.getText());
+    dialog.setLocationRelativeTo(this);
+    dialog.setVisible(true);
 
-        dialog.setLocationRelativeTo(this);
-        dialog.setVisible(true);
     }//GEN-LAST:event_bayarActionPerformed
 
     /**

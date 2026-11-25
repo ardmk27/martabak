@@ -9,6 +9,9 @@ package com.mycompany.martabak;
  * @author User
  */
 public class bayar extends javax.swing.JDialog {
+    public void setTotal(String total) {
+    jTextField1.setText(total);
+}
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(bayar.class.getName());
 

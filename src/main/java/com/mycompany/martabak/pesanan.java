@@ -21,6 +21,18 @@ public class pesanan extends javax.swing.JFrame {
      */
     public pesanan() {
         initComponents();
+        riwayat.addMenuListener(new javax.swing.event.MenuListener() {
+    public void menuCanceled(javax.swing.event.MenuEvent evt) {
+    }
+    public void menuDeselected(javax.swing.event.MenuEvent evt) {
+    }
+    public void menuSelected(javax.swing.event.MenuEvent evt) {
+        com.mycompany.martabak.riwayat frame = new com.mycompany.martabak.riwayat();
+        frame.setLocationRelativeTo(null);
+        frame.setVisible(true);
+        dispose();
+    }
+});
         pasangStatus();
         loadPesanan();
     }
@@ -87,6 +99,7 @@ public class pesanan extends javax.swing.JFrame {
 
         pesanan.setForeground(new java.awt.Color(0, 0, 153));
         pesanan.setText("Pesanan");
+        pesanan.addActionListener(this::pesananActionPerformed);
         jMenuBar1.add(pesanan);
 
         menu.setText("Menu");
@@ -102,6 +115,15 @@ public class pesanan extends javax.swing.JFrame {
         jMenuBar1.add(menu);
 
         riwayat.setText("Riwayat");
+        riwayat.addMenuListener(new javax.swing.event.MenuListener() {
+            public void menuCanceled(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuDeselected(javax.swing.event.MenuEvent evt) {
+            }
+            public void menuSelected(javax.swing.event.MenuEvent evt) {
+                riwayatMenuSelected(evt);
+            }
+        });
         jMenuBar1.add(riwayat);
 
         setJMenuBar(jMenuBar1);
@@ -150,45 +172,44 @@ public class pesanan extends javax.swing.JFrame {
     
         private void loadPesanan() {
         DefaultTableModel model = (DefaultTableModel) tabelPesanan.getModel();
-        model.setRowCount(0);
-
-        String sql = "SELECT id_pesanan, DATE_FORMAT(waktu, '%d/%m/%Y %H:%i') AS waktu, "
-                   + "nama_pelanggan, pengambilan, total, status FROM pesanan ORDER BY id_pesanan";
-        try (Connection c = Koneksi.getKoneksi();
-             PreparedStatement ps = c.prepareStatement(sql);
-             ResultSet rs = ps.executeQuery()) {
-            while (rs.next()) {
-                model.addRow(new Object[]{
-                    rs.getInt("id_pesanan"),
-                    rs.getString("waktu"),
-                    rs.getString("nama_pelanggan"),
-                    rs.getString("pengambilan"),
-                    rs.getInt("total"),
-                    rs.getInt("status") == 1
-                });
-            }
-        } catch (SQLException e) {
-            javax.swing.JOptionPane.showMessageDialog(this, "Gagal ambil pesanan: " + e.getMessage());
+    model.setRowCount(0);
+    String sql = "SELECT id_pesanan, DATE_FORMAT(waktu, '%d/%m/%Y %H:%i') AS waktu, nama_pelanggan, pengambilan, total, status FROM pesanan WHERE status = 0 ORDER BY id_pesanan";
+    try (Connection c = Koneksi.getKoneksi();
+         PreparedStatement ps = c.prepareStatement(sql);
+         ResultSet rs = ps.executeQuery()) {
+        while (rs.next()) {
+            model.addRow(new Object[]{
+                rs.getInt("id_pesanan"),
+                rs.getString("waktu"),
+                rs.getString("nama_pelanggan"),
+                rs.getString("pengambilan"),
+                rs.getInt("total"),
+                false
+            });
         }
+    } catch (SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal ambil pesanan: " + e.getMessage());
+    }
     }
 
     private void pasangStatus() {
         tabelPesanan.getModel().addTableModelListener(ev -> {
-            if (ev.getType() == javax.swing.event.TableModelEvent.UPDATE
-                    && ev.getColumn() == 5 && ev.getFirstRow() >= 0) {
-                DefaultTableModel m = (DefaultTableModel) tabelPesanan.getModel();
-                int id = (int) m.getValueAt(ev.getFirstRow(), 0);
-                boolean selesai = (Boolean) m.getValueAt(ev.getFirstRow(), 5);
-                try (Connection c = Koneksi.getKoneksi();
-                     PreparedStatement ps = c.prepareStatement("UPDATE pesanan SET status = ? WHERE id_pesanan = ?")) {
-                    ps.setInt(1, selesai ? 1 : 0);
-                    ps.setInt(2, id);
-                    ps.executeUpdate();
-                } catch (SQLException e) {
-                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal update status: " + e.getMessage());
-                }
+        if (ev.getType() == javax.swing.event.TableModelEvent.UPDATE
+                && ev.getColumn() == 5 && ev.getFirstRow() >= 0) {
+            DefaultTableModel m = (DefaultTableModel) tabelPesanan.getModel();
+            int id = Integer.parseInt(m.getValueAt(ev.getFirstRow(), 0).toString());
+            boolean selesai = (Boolean) m.getValueAt(ev.getFirstRow(), 5);
+            try (Connection c = Koneksi.getKoneksi();
+                 PreparedStatement ps = c.prepareStatement("UPDATE pesanan SET status = ? WHERE id_pesanan = ?")) {
+                ps.setInt(1, selesai ? 1 : 0);
+                ps.setInt(2, id);
+                ps.executeUpdate();
+            } catch (SQLException e) {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal update status: " + e.getMessage());
             }
-        });
+            javax.swing.SwingUtilities.invokeLater(this::loadPesanan);
+        }
+    });
     }
     private void tabelPesananMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelPesananMouseClicked
         if (evt.getClickCount() == 2) {
@@ -211,6 +232,19 @@ public class pesanan extends javax.swing.JFrame {
 
         this.dispose();
     }//GEN-LAST:event_menuMenuSelected
+
+    private void pesananActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pesananActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_pesananActionPerformed
+
+    private void riwayatMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_riwayatMenuSelected
+        com.mycompany.martabak.riwayat frameMenu = new com.mycompany.martabak.riwayat();
+
+        frameMenu.setLocationRelativeTo(null);
+        frameMenu.setVisible(true);
+
+        this.dispose();
+    }//GEN-LAST:event_riwayatMenuSelected
 
     /**
      * @param args the command line arguments
