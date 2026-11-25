@@ -3,7 +3,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.martabak;
-
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author User
@@ -17,6 +21,8 @@ public class pesanan extends javax.swing.JFrame {
      */
     public pesanan() {
         initComponents();
+        pasangStatus();
+        loadPesanan();
     }
 
     /**
@@ -131,9 +137,55 @@ public class pesanan extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        // TODO add your handling code here:
+        //tambahPesanan dialog = new tambahPesanan(this, true);
+        //dialog.setLocationRelativeTo(this);
+        //dialog.setVisible(true);
+        //loadPesanan();
     }//GEN-LAST:event_jButton1ActionPerformed
 
+    
+        private void loadPesanan() {
+        DefaultTableModel model = (DefaultTableModel) tabelPesanan.getModel();
+        model.setRowCount(0);
+
+        String sql = "SELECT id_pesanan, DATE_FORMAT(waktu, '%d/%m/%Y %H:%i') AS waktu, "
+                   + "nama_pelanggan, pengambilan, total, status FROM pesanan ORDER BY id_pesanan";
+        try (Connection c = Koneksi.getKoneksi();
+             PreparedStatement ps = c.prepareStatement(sql);
+             ResultSet rs = ps.executeQuery()) {
+            while (rs.next()) {
+                model.addRow(new Object[]{
+                    rs.getInt("id_pesanan"),
+                    rs.getString("waktu"),
+                    rs.getString("nama_pelanggan"),
+                    rs.getString("pengambilan"),
+                    rs.getInt("total"),
+                    rs.getInt("status") == 1
+                });
+            }
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal ambil pesanan: " + e.getMessage());
+        }
+    }
+
+    private void pasangStatus() {
+        tabelPesanan.getModel().addTableModelListener(ev -> {
+            if (ev.getType() == javax.swing.event.TableModelEvent.UPDATE
+                    && ev.getColumn() == 5 && ev.getFirstRow() >= 0) {
+                DefaultTableModel m = (DefaultTableModel) tabelPesanan.getModel();
+                int id = (int) m.getValueAt(ev.getFirstRow(), 0);
+                boolean selesai = (Boolean) m.getValueAt(ev.getFirstRow(), 5);
+                try (Connection c = Koneksi.getKoneksi();
+                     PreparedStatement ps = c.prepareStatement("UPDATE pesanan SET status = ? WHERE id_pesanan = ?")) {
+                    ps.setInt(1, selesai ? 1 : 0);
+                    ps.setInt(2, id);
+                    ps.executeUpdate();
+                } catch (SQLException e) {
+                    javax.swing.JOptionPane.showMessageDialog(this, "Gagal update status: " + e.getMessage());
+                }
+            }
+        });
+    }
     private void tabelPesananMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelPesananMouseClicked
         if (evt.getClickCount() == 2) {
         int row = tabelPesanan.getSelectedRow();
