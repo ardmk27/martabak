@@ -41,6 +41,7 @@ public class bayar extends javax.swing.JDialog {
         jLabel2.setFont(new java.awt.Font("Segoe UI", 0, 14)); // NOI18N
         jLabel2.setText("Rp");
 
+        jTextField1.setEditable(false);
         jTextField1.setText("00000");
         jTextField1.addActionListener(this::jTextField1ActionPerformed);
 
