@@ -15,6 +15,15 @@ public class tambahMenu extends javax.swing.JDialog {
     private String tabelDb;
 private String kategori;
 
+private Integer idEdit = null; // null = mode tambah, ada isi = mode edit
+
+public void setEdit(int id, String nama, int harga) {
+    this.idEdit = id;
+    jTextField1.setText(nama);
+    jTextField2.setText(String.valueOf(harga));
+    setTitle("Edit Menu");
+}
+
 public void setTarget(String tabelDb, String kategori) {
     this.tabelDb = tabelDb;
     this.kategori = kategori;
@@ -41,17 +50,26 @@ private void simpan() {
         return;
     }
 
-    String sql = "INSERT INTO " + tabelDb + " (kategori, nama, harga) VALUES (?, ?, ?)";
-    try (java.sql.Connection c = Koneksi.getKoneksi();
-         java.sql.PreparedStatement ps = c.prepareStatement(sql)) {
-        ps.setString(1, kategori);
-        ps.setString(2, nama);
-        ps.setInt(3, harga);
-        ps.executeUpdate();
-        dispose();
-    } catch (java.sql.SQLException e) {
-        javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
+    String sql;
+if (idEdit == null) {
+    sql = "INSERT INTO " + tabelDb + " (kategori, nama, harga) VALUES (?, ?, ?)";
+} else {
+    String kolomId = tabelDb.equals("menu_base") ? "id_base" : "id_topping";
+    sql = "UPDATE " + tabelDb + " SET kategori = ?, nama = ?, harga = ? WHERE " + kolomId + " = ?";
+}
+try (java.sql.Connection c = Koneksi.getKoneksi();
+     java.sql.PreparedStatement ps = c.prepareStatement(sql)) {
+    ps.setString(1, kategori);
+    ps.setString(2, nama);
+    ps.setInt(3, harga);
+    if (idEdit != null) {
+        ps.setInt(4, idEdit);
     }
+    ps.executeUpdate();
+    dispose();
+} catch (java.sql.SQLException e) {
+    javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
+}
 }
     /**
      * Creates new form tBaseManis

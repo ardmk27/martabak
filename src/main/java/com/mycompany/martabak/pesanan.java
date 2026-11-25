@@ -149,7 +149,7 @@ public class pesanan extends javax.swing.JFrame {
     }//GEN-LAST:event_tabelPesananMouseClicked
 
     private void menuMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_menuMenuSelected
-        menu frameMenu = new menu();
+         com.mycompany.martabak.menu frameMenu = new com.mycompany.martabak.menu();
 
         frameMenu.setLocationRelativeTo(null);
         frameMenu.setVisible(true);

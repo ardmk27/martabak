@@ -14,28 +14,132 @@ import javax.swing.table.DefaultTableModel;
  * @author User
  */
 public class menu extends javax.swing.JFrame {
-   private void loadMenu(javax.swing.JTable tabel, String tabelDb, String kategori, String judulKolom) {
-        DefaultTableModel model = new DefaultTableModel(new Object[]{judulKolom, "Harga"}, 0) {
+        private String idKolom(String tabelDb) {
+        return tabelDb.equals("menu_base") ? "id_base" : "id_topping";
+    }
+   
+
+    private void loadMenu(javax.swing.JTable tabel, String tabelDb, String kategori, String judulKolom) {
+        DefaultTableModel model = new DefaultTableModel(new Object[]{"ID", judulKolom, "Harga"}, 0) {
             @Override
             public boolean isCellEditable(int row, int col) {
-                return false;
+                return col != 0;
             }
         };
 
-        String sql = "SELECT nama, harga FROM " + tabelDb + " WHERE kategori = ?";
+        String sql = "SELECT " + idKolom(tabelDb) + " AS id, nama, harga FROM " + tabelDb + " WHERE kategori = ?";
         try (Connection c = Koneksi.getKoneksi();
              PreparedStatement ps = c.prepareStatement(sql)) {
             ps.setString(1, kategori);
             try (ResultSet rs = ps.executeQuery()) {
                 while (rs.next()) {
-                    model.addRow(new Object[]{rs.getString("nama"), rs.getInt("harga")});
+                    model.addRow(new Object[]{rs.getInt("id"), rs.getString("nama"), rs.getInt("harga")});
                 }
             }
         } catch (SQLException e) {
             javax.swing.JOptionPane.showMessageDialog(this, "Gagal ambil data: " + e.getMessage());
         }
+
+        model.addTableModelListener(ev -> {
+            if (ev.getType() == javax.swing.event.TableModelEvent.UPDATE && ev.getFirstRow() >= 0) {
+                simpanEdit(model, ev.getFirstRow(), tabelDb);
+            }
+        });
+
         tabel.setModel(model);
+        tabel.removeColumn(tabel.getColumnModel().getColumn(0));
     }
+
+    private void simpanEdit(DefaultTableModel model, int baris, String tabelDb) {
+        int id = (int) model.getValueAt(baris, 0);
+        String nama = String.valueOf(model.getValueAt(baris, 1)).trim();
+        String hargaTeks = String.valueOf(model.getValueAt(baris, 2)).trim();
+
+        int harga;
+        try {
+            harga = Integer.parseInt(hargaTeks);
+            if (nama.isEmpty() || harga <= 0) throw new NumberFormatException();
+        } catch (NumberFormatException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Nama tidak boleh kosong dan harga harus angka lebih dari 0.");
+            javax.swing.SwingUtilities.invokeLater(this::refreshMenu);
+            return;
+        }
+
+        String sql = "UPDATE " + tabelDb + " SET nama = ?, harga = ? WHERE " + idKolom(tabelDb) + " = ?";
+        try (Connection c = Koneksi.getKoneksi();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, nama);
+            ps.setInt(2, harga);
+            ps.setInt(3, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan: " + e.getMessage());
+        }
+        javax.swing.SwingUtilities.invokeLater(this::refreshMenu);
+    }
+
+    private void hapusBaris(javax.swing.JTable tabel, String tabelDb) {
+        int baris = tabel.getSelectedRow();
+        if (baris < 0) return;
+        int b = tabel.convertRowIndexToModel(baris);
+        DefaultTableModel m = (DefaultTableModel) tabel.getModel();
+        int id = (int) m.getValueAt(b, 0);
+        String nama = String.valueOf(m.getValueAt(b, 1));
+
+        int jawab = javax.swing.JOptionPane.showConfirmDialog(this,
+                "Hapus \"" + nama + "\" dari menu?", "Konfirmasi", javax.swing.JOptionPane.YES_NO_OPTION);
+        if (jawab != javax.swing.JOptionPane.YES_OPTION) return;
+
+        String sql = "DELETE FROM " + tabelDb + " WHERE " + idKolom(tabelDb) + " = ?";
+        try (Connection c = Koneksi.getKoneksi();
+             PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setInt(1, id);
+            ps.executeUpdate();
+        } catch (SQLException e) {
+            if (e.getErrorCode() == 1451) {
+                javax.swing.JOptionPane.showMessageDialog(this,
+                    "Item ini tidak bisa dihapus karena sudah dipakai di pesanan.");
+            } else {
+                javax.swing.JOptionPane.showMessageDialog(this, "Gagal menghapus: " + e.getMessage());
+            }
+        }
+        refreshMenu();
+    }
+
+    private void pasangPopup(javax.swing.JTable tabel, String tabelDb) {
+        javax.swing.JPopupMenu popup = new javax.swing.JPopupMenu();
+        javax.swing.JMenuItem itemHapus = new javax.swing.JMenuItem("Hapus");
+        popup.add(itemHapus);
+        itemHapus.addActionListener(e -> hapusBaris(tabel, tabelDb));
+
+        tabel.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mousePressed(java.awt.event.MouseEvent e) { tampil(e); }
+            @Override public void mouseReleased(java.awt.event.MouseEvent e) { tampil(e); }
+            private void tampil(java.awt.event.MouseEvent e) {
+                if (e.isPopupTrigger()) {
+                    int baris = tabel.rowAtPoint(e.getPoint());
+                    if (baris >= 0) {
+                        tabel.setRowSelectionInterval(baris, baris);
+                        popup.show(tabel, e.getX(), e.getY());
+                    }
+                }
+            }
+        });
+    }
+
+    private void pasangEditLangsung(javax.swing.JTable tabel, String tabelDb) {
+        javax.swing.DefaultCellEditor editor = (javax.swing.DefaultCellEditor) tabel.getDefaultEditor(Object.class);
+        editor.setClickCountToStart(1);
+
+        tabel.getInputMap(javax.swing.JComponent.WHEN_FOCUSED).put(
+                javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_DELETE, 0), "hapusBaris");
+        tabel.getActionMap().put("hapusBaris", new javax.swing.AbstractAction() {
+            @Override public void actionPerformed(java.awt.event.ActionEvent e) {
+                hapusBaris(tabel, tabelDb);
+            }
+        });
+    }
+    
 
     private void bukaTambah(String tabelDb, String kategori) {
         tambahMenu dialog = new tambahMenu(this, true);
@@ -59,11 +163,16 @@ public class menu extends javax.swing.JFrame {
      */
     public menu() {
         initComponents();
+        pasangPopup(jTable1, "menu_base");
+        pasangPopup(jTable3, "menu_topping");
+        pasangPopup(jTable2, "menu_base");
+        pasangPopup(jTable5, "menu_topping");
+        pasangEditLangsung(jTable1, "menu_base");
+        pasangEditLangsung(jTable3, "menu_topping");
+        pasangEditLangsung(jTable2, "menu_base");
+        pasangEditLangsung(jTable5, "menu_topping");
         refreshMenu();
-        loadMenu(jTable1, "menu_base",    "manis", "Base");
-        loadMenu(jTable3, "menu_topping", "manis", "Topping");
-        loadMenu(jTable2, "menu_base",    "telor", "Base");
-        loadMenu(jTable5, "menu_topping", "telor", "Topping");
+   
     }
 
     /**
@@ -390,4 +499,6 @@ public class menu extends javax.swing.JFrame {
     private javax.swing.JMenu pesanan;
     private javax.swing.JMenu riwayat;
     // End of variables declaration//GEN-END:variables
+
+    
 }
