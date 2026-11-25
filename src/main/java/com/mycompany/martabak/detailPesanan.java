@@ -3,12 +3,76 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JDialog.java to edit this template
  */
 package com.mycompany.martabak;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
  * @author User
  */
 public class detailPesanan extends javax.swing.JDialog {
+    private int idPesanan;
+
+public void muatDetail(int id) {
+    this.idPesanan = id;
+    String sqlHeader = "SELECT DATE_FORMAT(waktu, '%d/%m/%Y %H:%i') AS waktu, nama_pelanggan, no_telepon, "
+                     + "pengambilan, alamat, ongkir, total FROM pesanan WHERE id_pesanan = ?";
+    String sqlItem = "SELECT d.no_item, MAX(b.kategori) AS jenis, MAX(b.nama) AS base, "
+                   + "GROUP_CONCAT(t.nama SEPARATOR ', ') AS topping, SUM(d.subtotal) AS harga "
+                   + "FROM detail_pesanan d JOIN menu_base b ON b.id_base = d.id_base "
+                   + "LEFT JOIN menu_topping t ON t.id_topping = d.id_topping "
+                   + "WHERE d.id_pesanan = ? GROUP BY d.no_item ORDER BY d.no_item";
+
+    try (Connection c = Koneksi.getKoneksi()) {
+        try (PreparedStatement ps = c.prepareStatement(sqlHeader)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int ongkir = rs.getInt("ongkir");
+                    int total = rs.getInt("total");
+                    String telp = rs.getString("no_telepon");
+                    String alamat = rs.getString("alamat");
+                    waktu.setText(rs.getString("waktu"));
+                    jTextField1.setText(rs.getString("nama_pelanggan"));
+                    jTextField2.setText(telp == null ? "-" : telp);
+                    jTextField3.setText(rs.getString("pengambilan"));
+                    jTextArea1.setText(alamat == null ? "" : alamat);
+                    jTextField4.setText(String.valueOf(total - ongkir));
+                    jTextField5.setText(String.valueOf(ongkir));
+                    jTextField6.setText(String.valueOf(total));
+                }
+            }
+        }
+
+        DefaultTableModel m = new DefaultTableModel(
+                new Object[]{"No", "Jenis", "Base", "Topping", "Harga"}, 0) {
+            @Override public boolean isCellEditable(int r, int col) { return false; }
+        };
+        try (PreparedStatement ps = c.prepareStatement(sqlItem)) {
+            ps.setInt(1, id);
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) {
+                    String jenis = rs.getString("jenis");
+                    String topping = rs.getString("topping");
+                    m.addRow(new Object[]{
+                        rs.getInt("no_item"),
+                        jenis.substring(0, 1).toUpperCase() + jenis.substring(1),
+                        rs.getString("base"),
+                        topping == null ? "-" : topping,
+                        rs.getInt("harga")
+                    });
+                }
+            }
+        }
+        jTable1.setModel(m);
+        jTable1.getColumnModel().getColumn(0).setMaxWidth(50);
+    } catch (SQLException e) {
+        javax.swing.JOptionPane.showMessageDialog(this, "Gagal ambil detail: " + e.getMessage());
+    }
+}
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(detailPesanan.class.getName());
 

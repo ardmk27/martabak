@@ -3,12 +3,20 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/GUIForms/JFrame.java to edit this template
  */
 package com.mycompany.martabak;
-
-/**
- *
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.sql.Types;
+import java.util.ArrayList;
+import java.util.List;
+import javax.swing.table.DefaultTableModel;
+ /*
  * @author User
  */
 public class tambahPesanan extends javax.swing.JFrame {
+    
     
     private static final java.util.logging.Logger logger = java.util.logging.Logger.getLogger(tambahPesanan.class.getName());
 
@@ -17,9 +25,11 @@ public class tambahPesanan extends javax.swing.JFrame {
      */
     public tambahPesanan() {
         initComponents();
+        initBackend();
         
         panelAlamat.setVisible(false);
     }
+    
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -37,24 +47,24 @@ public class tambahPesanan extends javax.swing.JFrame {
         jLabel1 = new javax.swing.JLabel();
         panelPelanggan = new javax.swing.JPanel();
         jLabel2 = new javax.swing.JLabel();
-        jTextField1 = new javax.swing.JTextField();
+        txtNama = new javax.swing.JTextField();
         jLabel3 = new javax.swing.JLabel();
-        jTextField2 = new javax.swing.JTextField();
-        pickupButton = new javax.swing.JRadioButton();
-        deliveryButton = new javax.swing.JRadioButton();
+        txtTelepon = new javax.swing.JTextField();
+        rbPickUp = new javax.swing.JRadioButton();
+        rbDelivery = new javax.swing.JRadioButton();
         panelAlamat = new javax.swing.JPanel();
         jLabel4 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
-        jTextArea1 = new javax.swing.JTextArea();
+        txtAlamat = new javax.swing.JTextArea();
         jLabel5 = new javax.swing.JLabel();
         jScrollPane3 = new javax.swing.JScrollPane();
-        jTextArea2 = new javax.swing.JTextArea();
+        txtCatatan = new javax.swing.JTextArea();
         panelOrder = new javax.swing.JPanel();
         jLabel6 = new javax.swing.JLabel();
-        manisButton = new javax.swing.JRadioButton();
-        telorButton = new javax.swing.JRadioButton();
+        rbManis = new javax.swing.JRadioButton();
+        rbTelor = new javax.swing.JRadioButton();
         jLabel7 = new javax.swing.JLabel();
-        jComboBox1 = new javax.swing.JComboBox<>();
+        cmbBase = new javax.swing.JComboBox<>();
         jLabel8 = new javax.swing.JLabel();
         jCheckBox1 = new javax.swing.JCheckBox();
         jCheckBox2 = new javax.swing.JCheckBox();
@@ -64,25 +74,25 @@ public class tambahPesanan extends javax.swing.JFrame {
         jCheckBox6 = new javax.swing.JCheckBox();
         jLabel9 = new javax.swing.JLabel();
         jScrollPane4 = new javax.swing.JScrollPane();
-        jTextArea3 = new javax.swing.JTextArea();
+        txtCatatanItem = new javax.swing.JTextArea();
         jLabel10 = new javax.swing.JLabel();
         jLabel11 = new javax.swing.JLabel();
-        subtotField = new javax.swing.JTextField();
+        txtSubTotal = new javax.swing.JTextField();
         simpanButton = new javax.swing.JButton();
         panelDaftar = new javax.swing.JPanel();
         jScrollPane5 = new javax.swing.JScrollPane();
-        daftarPesan = new javax.swing.JTable();
+        tblKeranjang = new javax.swing.JTable();
         tabelRingkasan = new javax.swing.JPanel();
         jLabel12 = new javax.swing.JLabel();
-        subtotalField = new javax.swing.JTextField();
+        txtSubtotal = new javax.swing.JTextField();
         jLabel13 = new javax.swing.JLabel();
-        ongkirField = new javax.swing.JTextField();
+        txtOngkir = new javax.swing.JTextField();
         jLabel14 = new javax.swing.JLabel();
         jLabel15 = new javax.swing.JLabel();
-        totalField = new javax.swing.JTextField();
+        txtTotal = new javax.swing.JTextField();
         jLabel16 = new javax.swing.JLabel();
         jLabel17 = new javax.swing.JLabel();
-        selesaiButton = new javax.swing.JButton();
+        btnSelesai = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -93,20 +103,20 @@ public class tambahPesanan extends javax.swing.JFrame {
 
         jLabel2.setText("Nama:");
 
-        jTextField1.addActionListener(this::jTextField1ActionPerformed);
+        txtNama.addActionListener(this::txtNamaActionPerformed);
 
         jLabel3.setText("No. Telepon:");
 
-        jTextField2.addActionListener(this::jTextField2ActionPerformed);
+        txtTelepon.addActionListener(this::txtTeleponActionPerformed);
 
-        pengambilan.add(pickupButton);
-        pickupButton.setSelected(true);
-        pickupButton.setText("Pick Up");
-        pickupButton.addActionListener(this::pickupButtonActionPerformed);
+        pengambilan.add(rbPickUp);
+        rbPickUp.setSelected(true);
+        rbPickUp.setText("Pick Up");
+        rbPickUp.addActionListener(this::rbPickUpActionPerformed);
 
-        pengambilan.add(deliveryButton);
-        deliveryButton.setText("Delivery");
-        deliveryButton.addActionListener(this::deliveryButtonActionPerformed);
+        pengambilan.add(rbDelivery);
+        rbDelivery.setText("Delivery");
+        rbDelivery.addActionListener(this::rbDeliveryActionPerformed);
 
         javax.swing.GroupLayout panelPelangganLayout = new javax.swing.GroupLayout(panelPelanggan);
         panelPelanggan.setLayout(panelPelangganLayout);
@@ -120,11 +130,11 @@ public class tambahPesanan extends javax.swing.JFrame {
                 .addGap(45, 45, 45)
                 .addGroup(panelPelangganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(panelPelangganLayout.createSequentialGroup()
-                        .addComponent(pickupButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(rbPickUp, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addComponent(deliveryButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addComponent(rbDelivery, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTelepon, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtNama, javax.swing.GroupLayout.PREFERRED_SIZE, 373, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         panelPelangganLayout.setVerticalGroup(
@@ -133,15 +143,15 @@ public class tambahPesanan extends javax.swing.JFrame {
                 .addGap(19, 19, 19)
                 .addGroup(panelPelangganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel2)
-                    .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtNama, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panelPelangganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel3)
-                    .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(txtTelepon, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addGroup(panelPelangganLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(pickupButton)
-                    .addComponent(deliveryButton))
+                    .addComponent(rbPickUp)
+                    .addComponent(rbDelivery))
                 .addContainerGap(22, Short.MAX_VALUE))
         );
 
@@ -150,18 +160,18 @@ public class tambahPesanan extends javax.swing.JFrame {
         jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane1.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        jTextArea1.setColumns(20);
-        jTextArea1.setRows(5);
-        jScrollPane1.setViewportView(jTextArea1);
+        txtAlamat.setColumns(20);
+        txtAlamat.setRows(5);
+        jScrollPane1.setViewportView(txtAlamat);
 
         jLabel5.setText("Catatan:");
 
         jScrollPane3.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane3.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        jTextArea2.setColumns(20);
-        jTextArea2.setRows(5);
-        jScrollPane3.setViewportView(jTextArea2);
+        txtCatatan.setColumns(20);
+        txtCatatan.setRows(5);
+        jScrollPane3.setViewportView(txtCatatan);
 
         javax.swing.GroupLayout panelAlamatLayout = new javax.swing.GroupLayout(panelAlamat);
         panelAlamat.setLayout(panelAlamatLayout);
@@ -194,15 +204,15 @@ public class tambahPesanan extends javax.swing.JFrame {
 
         jLabel6.setText("Jenis Martabak");
 
-        jenis.add(manisButton);
-        manisButton.setText("Manis");
+        jenis.add(rbManis);
+        rbManis.setText("Manis");
 
-        jenis.add(telorButton);
-        telorButton.setText("Telor");
+        jenis.add(rbTelor);
+        rbTelor.setText("Telor");
 
         jLabel7.setText("Base:");
 
-        jComboBox1.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
+        cmbBase.setModel(new javax.swing.DefaultComboBoxModel<>(new String[] { "Item 1", "Item 2", "Item 3", "Item 4" }));
 
         jLabel8.setText("Topping:");
 
@@ -225,9 +235,9 @@ public class tambahPesanan extends javax.swing.JFrame {
         jScrollPane4.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
         jScrollPane4.setVerticalScrollBarPolicy(javax.swing.ScrollPaneConstants.VERTICAL_SCROLLBAR_NEVER);
 
-        jTextArea3.setColumns(20);
-        jTextArea3.setRows(5);
-        jScrollPane4.setViewportView(jTextArea3);
+        txtCatatanItem.setColumns(20);
+        txtCatatanItem.setRows(5);
+        jScrollPane4.setViewportView(txtCatatanItem);
 
         jLabel10.setText("Sub Total:");
 
@@ -258,16 +268,16 @@ public class tambahPesanan extends javax.swing.JFrame {
                                 .addComponent(jCheckBox5)
                                 .addGap(18, 18, 18)
                                 .addComponent(jCheckBox6))
-                            .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cmbBase, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(panelOrderLayout.createSequentialGroup()
                                 .addGroup(panelOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(manisButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(rbManis, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(panelOrderLayout.createSequentialGroup()
                                         .addComponent(jCheckBox1)
                                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                                         .addComponent(jCheckBox2)))
                                 .addGroup(panelOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                                    .addComponent(telorButton, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                    .addComponent(rbTelor, javax.swing.GroupLayout.PREFERRED_SIZE, 100, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addGroup(panelOrderLayout.createSequentialGroup()
                                         .addGap(18, 18, 18)
                                         .addComponent(jCheckBox3))))
@@ -276,7 +286,7 @@ public class tambahPesanan extends javax.swing.JFrame {
                     .addGroup(panelOrderLayout.createSequentialGroup()
                         .addComponent(jLabel11)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(subtotField, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addComponent(txtSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, 102, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                         .addComponent(simpanButton)
                         .addGap(83, 83, 83))))
@@ -287,11 +297,11 @@ public class tambahPesanan extends javax.swing.JFrame {
                 .addGap(25, 25, 25)
                 .addGroup(panelOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel6)
-                    .addComponent(manisButton)
-                    .addComponent(telorButton))
+                    .addComponent(rbManis)
+                    .addComponent(rbTelor))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addGroup(panelOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(jComboBox1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(cmbBase, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel7))
                 .addGap(18, 18, 18)
                 .addGroup(panelOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -314,7 +324,7 @@ public class tambahPesanan extends javax.swing.JFrame {
                         .addGroup(panelOrderLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                             .addComponent(jLabel11)
                             .addComponent(jLabel10)
-                            .addComponent(subtotField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addComponent(txtSubTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                         .addContainerGap(38, Short.MAX_VALUE))
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, panelOrderLayout.createSequentialGroup()
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -322,7 +332,7 @@ public class tambahPesanan extends javax.swing.JFrame {
                         .addGap(20, 20, 20))))
         );
 
-        daftarPesan.setModel(new javax.swing.table.DefaultTableModel(
+        tblKeranjang.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
                 {null, null, null, null, null},
                 {null, null, null, null, null},
@@ -333,7 +343,7 @@ public class tambahPesanan extends javax.swing.JFrame {
                 "No", "Jenis", "Base", "Topping", "Harga"
             }
         ));
-        jScrollPane5.setViewportView(daftarPesan);
+        jScrollPane5.setViewportView(tblKeranjang);
 
         javax.swing.GroupLayout panelDaftarLayout = new javax.swing.GroupLayout(panelDaftar);
         panelDaftar.setLayout(panelDaftarLayout);
@@ -354,7 +364,7 @@ public class tambahPesanan extends javax.swing.JFrame {
 
         jLabel12.setText("Subtotal:");
 
-        subtotalField.addActionListener(this::subtotalFieldActionPerformed);
+        txtSubtotal.addActionListener(this::txtSubtotalActionPerformed);
 
         jLabel13.setText("Rp");
 
@@ -387,9 +397,9 @@ public class tambahPesanan extends javax.swing.JFrame {
                         .addComponent(jLabel16)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(tabelRingkasanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(totalField, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
-                    .addComponent(ongkirField)
-                    .addComponent(subtotalField))
+                    .addComponent(txtTotal, javax.swing.GroupLayout.DEFAULT_SIZE, 144, Short.MAX_VALUE)
+                    .addComponent(txtOngkir)
+                    .addComponent(txtSubtotal))
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         tabelRingkasanLayout.setVerticalGroup(
@@ -398,23 +408,23 @@ public class tambahPesanan extends javax.swing.JFrame {
                 .addContainerGap()
                 .addGroup(tabelRingkasanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(jLabel12)
-                    .addComponent(subtotalField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtSubtotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel13))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(tabelRingkasanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(ongkirField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtOngkir, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel14)
                     .addComponent(jLabel15))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(tabelRingkasanLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(totalField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(txtTotal, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jLabel16)
                     .addComponent(jLabel17))
                 .addContainerGap(11, Short.MAX_VALUE))
         );
 
-        selesaiButton.setText("Selesai");
-        selesaiButton.addActionListener(this::selesaiButtonActionPerformed);
+        btnSelesai.setText("Selesai");
+        btnSelesai.addActionListener(this::btnSelesaiActionPerformed);
 
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
@@ -428,7 +438,7 @@ public class tambahPesanan extends javax.swing.JFrame {
                     .addGroup(mainPanelLayout.createSequentialGroup()
                         .addGap(23, 23, 23)
                         .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(selesaiButton, javax.swing.GroupLayout.PREFERRED_SIZE, 748, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btnSelesai, javax.swing.GroupLayout.PREFERRED_SIZE, 748, javax.swing.GroupLayout.PREFERRED_SIZE)
                             .addGroup(mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                 .addComponent(panelPelanggan, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                                 .addComponent(panelAlamat, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
@@ -453,7 +463,7 @@ public class tambahPesanan extends javax.swing.JFrame {
                 .addGap(38, 38, 38)
                 .addComponent(tabelRingkasan, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
-                .addComponent(selesaiButton)
+                .addComponent(btnSelesai)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
@@ -463,37 +473,277 @@ public class tambahPesanan extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 800, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 788, Short.MAX_VALUE)
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addGap(38, 38, 38)
+                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 356, Short.MAX_VALUE)
+                .addContainerGap())
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
+    // ===================== BACKEND =====================
+    private static final int ONGKIR_DELIVERY = 5000; // ubah sesuai ongkir flat
 
-    private void jTextField1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField1ActionPerformed
+    private static class Opsi {
+        int id; String nama; int harga;
+        Opsi(int id, String nama, int harga) { this.id = id; this.nama = nama; this.harga = harga; }
+        @Override public String toString() { return nama + " (" + harga + ")"; }
+    }
+
+    private static class ItemPesan {
+        String jenis; Opsi base; List<Opsi> topping = new ArrayList<>(); String catatan;
+        int harga() { int h = base.harga; for (Opsi t : topping) h += t.harga; return h; }
+        String namaTopping() {
+            if (topping.isEmpty()) return "-";
+            StringBuilder sb = new StringBuilder();
+            for (Opsi t : topping) { if (sb.length() > 0) sb.append(", "); sb.append(t.nama); }
+            return sb.toString();
+        }
+    }
+
+    private final List<ItemPesan> keranjang = new ArrayList<>();
+    private final List<Opsi> daftarTopping = new ArrayList<>();
+    private javax.swing.JCheckBox[] cbTopping;
+
+    private void initBackend() {
+        cbTopping = new javax.swing.JCheckBox[]{jCheckBox1, jCheckBox2, jCheckBox3,
+                                                jCheckBox4, jCheckBox5, jCheckBox6};
+
+        javax.swing.ButtonGroup g1 = new javax.swing.ButtonGroup();
+        g1.add(rbPickUp); g1.add(rbDelivery);
+        javax.swing.ButtonGroup g2 = new javax.swing.ButtonGroup();
+        g2.add(rbManis); g2.add(rbTelor);
+
+        rbPickUp.setSelected(true);
+        rbManis.setSelected(true);
+        txtAlamat.setEnabled(false);
+        txtSubtotal.setEditable(false);
+        txtOngkir.setEditable(false);
+        txtTotal.setEditable(false);
+
+        tblKeranjang.setModel(new DefaultTableModel(
+                new Object[]{"No", "Jenis", "Base", "Topping", "Harga"}, 0) {
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        });
+
+        rbPickUp.addActionListener(e -> ubahPengambilan());
+        rbDelivery.addActionListener(e -> ubahPengambilan());
+        rbManis.addActionListener(e -> muatMenu());
+        rbTelor.addActionListener(e -> muatMenu());
+        //btnTambahItem.addActionListener(e -> tambahItem());
+        btnSelesai.addActionListener(e -> simpanPesanan());
+
+        // klik dua kali baris keranjang = hapus martabak itu
+        tblKeranjang.addMouseListener(new java.awt.event.MouseAdapter() {
+            @Override public void mouseClicked(java.awt.event.MouseEvent e) {
+                if (e.getClickCount() == 2) hapusItem();
+            }
+        });
+
+        muatMenu();
+        hitungTotal();
+    }
+
+    private String kategoriDb() { return rbManis.isSelected() ? "manis" : "telor"; }
+
+    private List<Opsi> ambil(String tabel, String kolomId) {
+        List<Opsi> hasil = new ArrayList<>();
+        String sql = "SELECT " + kolomId + " AS id, nama, harga FROM " + tabel
+                   + " WHERE kategori = ? ORDER BY " + kolomId;
+        try (Connection c = Koneksi.getKoneksi(); PreparedStatement ps = c.prepareStatement(sql)) {
+            ps.setString(1, kategoriDb());
+            try (ResultSet rs = ps.executeQuery()) {
+                while (rs.next()) hasil.add(new Opsi(rs.getInt("id"), rs.getString("nama"), rs.getInt("harga")));
+            }
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal ambil menu: " + e.getMessage());
+        }
+        return hasil;
+    }
+
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    private void muatMenu() {
+        List<Opsi> base = ambil("menu_base", "id_base");
+        cmbBase.setModel((javax.swing.ComboBoxModel) new javax.swing.DefaultComboBoxModel<Opsi>(
+                base.toArray(new Opsi[0])));
+
+        daftarTopping.clear();
+        daftarTopping.addAll(ambil("menu_topping", "id_topping"));
+        for (int i = 0; i < cbTopping.length; i++) {
+            cbTopping[i].setSelected(false);
+            if (i < daftarTopping.size()) {
+                cbTopping[i].setText(daftarTopping.get(i).toString());
+                cbTopping[i].setVisible(true);
+            } else {
+                cbTopping[i].setVisible(false);
+            }
+        }
+        if (daftarTopping.size() > cbTopping.length) {
+            javax.swing.JOptionPane.showMessageDialog(this,
+                "Topping ada " + daftarTopping.size() + " tapi form baru punya "
+                + cbTopping.length + " checkbox. Minta temanmu menambah checkbox.");
+        }
+    }
+
+    private void ubahPengambilan() {
+        boolean delivery = rbDelivery.isSelected();
+        txtAlamat.setEnabled(delivery);
+        if (!delivery) txtAlamat.setText("");
+        hitungTotal();
+    }
+
+    private int ongkir() { return rbDelivery.isSelected() ? ONGKIR_DELIVERY : 0; }
+
+    private void hitungTotal() {
+        int sub = 0;
+        for (ItemPesan it : keranjang) sub += it.harga();
+        txtSubtotal.setText(String.valueOf(sub));
+        txtOngkir.setText(String.valueOf(keranjang.isEmpty() ? 0 : ongkir()));
+        txtTotal.setText(String.valueOf(sub + (keranjang.isEmpty() ? 0 : ongkir())));
+    }
+
+    private void tambahItem() {
+        Opsi base = (Opsi) cmbBase.getSelectedItem();
+        if (base == null) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Pilih base dulu.");
+            return;
+        }
+        ItemPesan it = new ItemPesan();
+        it.jenis = rbManis.isSelected() ? "Manis" : "Telor";
+        it.base = base;
+        for (int i = 0; i < cbTopping.length && i < daftarTopping.size(); i++) {
+            if (cbTopping[i].isSelected()) it.topping.add(daftarTopping.get(i));
+        }
+        String cat = txtCatatanItem.getText().trim();
+        it.catatan = cat.isEmpty() ? null : cat;
+        keranjang.add(it);
+
+        for (javax.swing.JCheckBox cb : cbTopping) cb.setSelected(false);
+        txtCatatanItem.setText("");
+        segarkanTabel();
+    }
+
+    private void hapusItem() {
+        int baris = tblKeranjang.getSelectedRow();
+        if (baris < 0) return;
+        keranjang.remove(baris);
+        segarkanTabel();
+    }
+
+    private void segarkanTabel() {
+        DefaultTableModel m = (DefaultTableModel) tblKeranjang.getModel();
+        m.setRowCount(0);
+        int no = 1;
+        for (ItemPesan it : keranjang) {
+            m.addRow(new Object[]{no++, it.jenis, it.base.nama, it.namaTopping(), it.harga()});
+        }
+        hitungTotal();
+    }
+
+    private void simpanPesanan() {
+        String nama = txtNama.getText().trim();
+        String telp = txtTelepon.getText().trim();
+        String alamat = txtAlamat.getText().trim();
+        String catatan = txtCatatan.getText().trim();
+        String pengambilan = rbDelivery.isSelected() ? "Delivery" : "Pick Up";
+
+        if (nama.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Nama wajib diisi."); return;
+        }
+        if (keranjang.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Tambahkan minimal satu martabak."); return;
+        }
+        if (rbDelivery.isSelected() && alamat.isEmpty()) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Alamat wajib diisi untuk Delivery."); return;
+        }
+
+        int sub = 0;
+        for (ItemPesan it : keranjang) sub += it.harga();
+        int total = sub + ongkir();
+
+        String sqlPesanan = "INSERT INTO pesanan (nama_pelanggan, no_telepon, pengambilan, alamat, catatan, ongkir, total, status) "
+                          + "VALUES (?, ?, ?, ?, ?, ?, ?, 0)";
+        String sqlDetail = "INSERT INTO detail_pesanan (id_pesanan, no_item, id_base, id_topping, jumlah, harga_satuan, subtotal, catatan) "
+                         + "VALUES (?, ?, ?, ?, 1, ?, ?, ?)";
+
+        try (Connection c = Koneksi.getKoneksi()) {
+            c.setAutoCommit(false);
+            try {
+                int idPesanan;
+                try (PreparedStatement ps = c.prepareStatement(sqlPesanan, Statement.RETURN_GENERATED_KEYS)) {
+                    ps.setString(1, nama);
+                    if (telp.isEmpty()) ps.setNull(2, Types.VARCHAR); else ps.setString(2, telp);
+                    ps.setString(3, pengambilan);
+                    if (alamat.isEmpty()) ps.setNull(4, Types.VARCHAR); else ps.setString(4, alamat);
+                    if (catatan.isEmpty()) ps.setNull(5, Types.VARCHAR); else ps.setString(5, catatan);
+                    ps.setInt(6, ongkir());
+                    ps.setInt(7, total);
+                    ps.executeUpdate();
+                    try (ResultSet rs = ps.getGeneratedKeys()) { rs.next(); idPesanan = rs.getInt(1); }
+                }
+
+                try (PreparedStatement ps = c.prepareStatement(sqlDetail)) {
+                    int noItem = 1;
+                    for (ItemPesan it : keranjang) {
+                        isiDetail(ps, idPesanan, noItem, it.base.id, null, it.base.harga, it.catatan);
+                        for (Opsi t : it.topping) {
+                            isiDetail(ps, idPesanan, noItem, it.base.id, t.id, t.harga, null);
+                        }
+                        noItem++;
+                    }
+                    ps.executeBatch();
+                }
+                c.commit();
+                dispose();
+            } catch (SQLException e) {
+                c.rollback();
+                throw e;
+            }
+        } catch (SQLException e) {
+            javax.swing.JOptionPane.showMessageDialog(this, "Gagal menyimpan pesanan: " + e.getMessage());
+        }
+    }
+
+    private void isiDetail(PreparedStatement ps, int idPesanan, int noItem, int idBase,
+                           Integer idTopping, int harga, String catatan) throws SQLException {
+        ps.setInt(1, idPesanan);
+        ps.setInt(2, noItem);
+        ps.setInt(3, idBase);
+        if (idTopping == null) ps.setNull(4, Types.INTEGER); else ps.setInt(4, idTopping);
+        ps.setInt(5, harga);
+        ps.setInt(6, harga);
+        if (catatan == null) ps.setNull(7, Types.VARCHAR); else ps.setString(7, catatan);
+        ps.addBatch();
+    }
+    // ===================== END BACKEND =====================
+    private void txtNamaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtNamaActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField1ActionPerformed
+    }//GEN-LAST:event_txtNamaActionPerformed
 
-    private void jTextField2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextField2ActionPerformed
+    private void txtTeleponActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtTeleponActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jTextField2ActionPerformed
+    }//GEN-LAST:event_txtTeleponActionPerformed
 
-    private void pickupButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_pickupButtonActionPerformed
+    private void rbPickUpActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbPickUpActionPerformed
         panelAlamat.setVisible(false);
 
         this.revalidate();
         this.repaint();
-    }//GEN-LAST:event_pickupButtonActionPerformed
+    }//GEN-LAST:event_rbPickUpActionPerformed
 
-    private void deliveryButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_deliveryButtonActionPerformed
+    private void rbDeliveryActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_rbDeliveryActionPerformed
         panelAlamat.setVisible(true);
 
         this.revalidate();
         this.repaint();
-    }//GEN-LAST:event_deliveryButtonActionPerformed
+    }//GEN-LAST:event_rbDeliveryActionPerformed
 
     private void jCheckBox2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jCheckBox2ActionPerformed
         // TODO add your handling code here:
@@ -504,16 +754,16 @@ public class tambahPesanan extends javax.swing.JFrame {
     }//GEN-LAST:event_jCheckBox3ActionPerformed
 
     private void simpanButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_simpanButtonActionPerformed
-        // TODO add your handling code here:
+        tambahItem();
     }//GEN-LAST:event_simpanButtonActionPerformed
 
-    private void subtotalFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_subtotalFieldActionPerformed
+    private void txtSubtotalActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txtSubtotalActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_subtotalFieldActionPerformed
+    }//GEN-LAST:event_txtSubtotalActionPerformed
 
-    private void selesaiButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_selesaiButtonActionPerformed
+    private void btnSelesaiActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSelesaiActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_selesaiButtonActionPerformed
+    }//GEN-LAST:event_btnSelesaiActionPerformed
 
     /**
      * @param args the command line arguments
@@ -541,15 +791,14 @@ public class tambahPesanan extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
-    private javax.swing.JTable daftarPesan;
-    private javax.swing.JRadioButton deliveryButton;
+    private javax.swing.JButton btnSelesai;
+    private javax.swing.JComboBox<String> cmbBase;
     private javax.swing.JCheckBox jCheckBox1;
     private javax.swing.JCheckBox jCheckBox2;
     private javax.swing.JCheckBox jCheckBox3;
     private javax.swing.JCheckBox jCheckBox4;
     private javax.swing.JCheckBox jCheckBox5;
     private javax.swing.JCheckBox jCheckBox6;
-    private javax.swing.JComboBox<String> jComboBox1;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel10;
     private javax.swing.JLabel jLabel11;
@@ -572,27 +821,28 @@ public class tambahPesanan extends javax.swing.JFrame {
     private javax.swing.JScrollPane jScrollPane3;
     private javax.swing.JScrollPane jScrollPane4;
     private javax.swing.JScrollPane jScrollPane5;
-    private javax.swing.JTextArea jTextArea1;
-    private javax.swing.JTextArea jTextArea2;
-    private javax.swing.JTextArea jTextArea3;
-    private javax.swing.JTextField jTextField1;
-    private javax.swing.JTextField jTextField2;
     private javax.swing.ButtonGroup jenis;
     private javax.swing.JPanel mainPanel;
-    private javax.swing.JRadioButton manisButton;
-    private javax.swing.JTextField ongkirField;
     private javax.swing.JPanel panelAlamat;
     private javax.swing.JPanel panelDaftar;
     private javax.swing.JPanel panelOrder;
     private javax.swing.JPanel panelPelanggan;
     private javax.swing.ButtonGroup pengambilan;
-    private javax.swing.JRadioButton pickupButton;
-    private javax.swing.JButton selesaiButton;
+    private javax.swing.JRadioButton rbDelivery;
+    private javax.swing.JRadioButton rbManis;
+    private javax.swing.JRadioButton rbPickUp;
+    private javax.swing.JRadioButton rbTelor;
     private javax.swing.JButton simpanButton;
-    private javax.swing.JTextField subtotField;
-    private javax.swing.JTextField subtotalField;
     private javax.swing.JPanel tabelRingkasan;
-    private javax.swing.JRadioButton telorButton;
-    private javax.swing.JTextField totalField;
+    private javax.swing.JTable tblKeranjang;
+    private javax.swing.JTextArea txtAlamat;
+    private javax.swing.JTextArea txtCatatan;
+    private javax.swing.JTextArea txtCatatanItem;
+    private javax.swing.JTextField txtNama;
+    private javax.swing.JTextField txtOngkir;
+    private javax.swing.JTextField txtSubTotal;
+    private javax.swing.JTextField txtSubtotal;
+    private javax.swing.JTextField txtTelepon;
+    private javax.swing.JTextField txtTotal;
     // End of variables declaration//GEN-END:variables
 }

@@ -137,10 +137,14 @@ public class pesanan extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        //tambahPesanan dialog = new tambahPesanan(this, true);
-        //dialog.setLocationRelativeTo(this);
-        //dialog.setVisible(true);
-        //loadPesanan();
+         tambahPesanan form = new tambahPesanan();
+    form.setLocationRelativeTo(this);
+    form.addWindowListener(new java.awt.event.WindowAdapter() {
+        @Override public void windowClosed(java.awt.event.WindowEvent e) {
+            loadPesanan();
+        }
+    });
+    form.setVisible(true);
     }//GEN-LAST:event_jButton1ActionPerformed
 
     
@@ -189,15 +193,14 @@ public class pesanan extends javax.swing.JFrame {
     private void tabelPesananMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tabelPesananMouseClicked
         if (evt.getClickCount() == 2) {
         int row = tabelPesanan.getSelectedRow();
-
         if (row != -1) {
-            detailPesanan dialog =
-                new detailPesanan(this, true);
-
+            int id = Integer.parseInt(tabelPesanan.getValueAt(row, 0).toString());
+            detailPesanan dialog = new detailPesanan(this, true);
+            dialog.muatDetail(id);
             dialog.setLocationRelativeTo(this);
             dialog.setVisible(true);
-            }
         }
+    }
     }//GEN-LAST:event_tabelPesananMouseClicked
 
     private void menuMenuSelected(javax.swing.event.MenuEvent evt) {//GEN-FIRST:event_menuMenuSelected

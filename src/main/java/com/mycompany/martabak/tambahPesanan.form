@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 
-<Form version="1.3" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
+<Form version="1.5" maxVersion="1.9" type="org.netbeans.modules.form.forminfo.JFrameFormInfo">
   <NonVisualComponents>
     <Component class="javax.swing.ButtonGroup" name="pengambilan">
     </Component>
@@ -29,12 +29,20 @@
   <Layout>
     <DimensionLayout dim="0">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jScrollPane2" alignment="0" pref="800" max="32767" attributes="0"/>
+          <Group type="102" alignment="1" attributes="0">
+              <EmptySpace max="-2" attributes="0"/>
+              <Component id="jScrollPane2" pref="788" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
     <DimensionLayout dim="1">
       <Group type="103" groupAlignment="0" attributes="0">
-          <Component id="jScrollPane2" alignment="0" pref="400" max="32767" attributes="0"/>
+          <Group type="102" attributes="0">
+              <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
+              <Component id="jScrollPane2" pref="356" max="32767" attributes="0"/>
+              <EmptySpace max="-2" attributes="0"/>
+          </Group>
       </Group>
     </DimensionLayout>
   </Layout>
@@ -62,7 +70,7 @@
                           <Group type="102" alignment="0" attributes="0">
                               <EmptySpace min="-2" pref="23" max="-2" attributes="0"/>
                               <Group type="103" groupAlignment="0" attributes="0">
-                                  <Component id="selesaiButton" alignment="0" min="-2" pref="748" max="-2" attributes="0"/>
+                                  <Component id="btnSelesai" alignment="0" min="-2" pref="748" max="-2" attributes="0"/>
                                   <Group type="103" groupAlignment="0" max="-2" attributes="0">
                                       <Component id="panelPelanggan" max="32767" attributes="0"/>
                                       <Component id="panelAlamat" max="32767" attributes="0"/>
@@ -93,7 +101,7 @@
                       <EmptySpace min="-2" pref="38" max="-2" attributes="0"/>
                       <Component id="tabelRingkasan" min="-2" max="-2" attributes="0"/>
                       <EmptySpace type="separate" max="-2" attributes="0"/>
-                      <Component id="selesaiButton" min="-2" max="-2" attributes="0"/>
+                      <Component id="btnSelesai" min="-2" max="-2" attributes="0"/>
                       <EmptySpace max="32767" attributes="0"/>
                   </Group>
               </Group>
@@ -122,12 +130,12 @@
                           <EmptySpace min="-2" pref="45" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" attributes="0">
                               <Group type="102" attributes="0">
-                                  <Component id="pickupButton" min="-2" pref="100" max="-2" attributes="0"/>
+                                  <Component id="rbPickUp" min="-2" pref="100" max="-2" attributes="0"/>
                                   <EmptySpace type="separate" max="-2" attributes="0"/>
-                                  <Component id="deliveryButton" min="-2" pref="100" max="-2" attributes="0"/>
+                                  <Component id="rbDelivery" min="-2" pref="100" max="-2" attributes="0"/>
                               </Group>
-                              <Component id="jTextField2" min="-2" pref="373" max="-2" attributes="0"/>
-                              <Component id="jTextField1" min="-2" pref="373" max="-2" attributes="0"/>
+                              <Component id="txtTelepon" min="-2" pref="373" max="-2" attributes="0"/>
+                              <Component id="txtNama" min="-2" pref="373" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -139,17 +147,17 @@
                           <EmptySpace min="-2" pref="19" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel2" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtNama" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel3" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="jTextField2" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtTelepon" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="pickupButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="deliveryButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbPickUp" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbDelivery" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace pref="22" max="32767" attributes="0"/>
                       </Group>
@@ -162,9 +170,9 @@
                     <Property name="text" type="java.lang.String" value="Nama:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="jTextField1">
+                <Component class="javax.swing.JTextField" name="txtNama">
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField1ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtNamaActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel3">
@@ -172,12 +180,12 @@
                     <Property name="text" type="java.lang.String" value="No. Telepon:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="jTextField2">
+                <Component class="javax.swing.JTextField" name="txtTelepon">
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jTextField2ActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtTeleponActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JRadioButton" name="pickupButton">
+                <Component class="javax.swing.JRadioButton" name="rbPickUp">
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="pengambilan"/>
@@ -186,10 +194,10 @@
                     <Property name="text" type="java.lang.String" value="Pick Up"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="pickupButtonActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rbPickUpActionPerformed"/>
                   </Events>
                 </Component>
-                <Component class="javax.swing.JRadioButton" name="deliveryButton">
+                <Component class="javax.swing.JRadioButton" name="rbDelivery">
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="pengambilan"/>
@@ -197,7 +205,7 @@
                     <Property name="text" type="java.lang.String" value="Delivery"/>
                   </Properties>
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="deliveryButtonActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="rbDeliveryActionPerformed"/>
                   </Events>
                 </Component>
               </SubComponents>
@@ -257,7 +265,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTextArea" name="jTextArea1">
+                    <Component class="javax.swing.JTextArea" name="txtAlamat">
                       <Properties>
                         <Property name="columns" type="int" value="20"/>
                         <Property name="rows" type="int" value="5"/>
@@ -281,7 +289,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTextArea" name="jTextArea2">
+                    <Component class="javax.swing.JTextArea" name="txtCatatan">
                       <Properties>
                         <Property name="columns" type="int" value="20"/>
                         <Property name="rows" type="int" value="5"/>
@@ -316,10 +324,10 @@
                                           <EmptySpace type="separate" max="-2" attributes="0"/>
                                           <Component id="jCheckBox6" min="-2" max="-2" attributes="0"/>
                                       </Group>
-                                      <Component id="jComboBox1" min="-2" max="-2" attributes="0"/>
+                                      <Component id="cmbBase" min="-2" max="-2" attributes="0"/>
                                       <Group type="102" alignment="0" attributes="0">
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="manisButton" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
+                                              <Component id="rbManis" alignment="0" min="-2" pref="100" max="-2" attributes="0"/>
                                               <Group type="102" alignment="0" attributes="0">
                                                   <Component id="jCheckBox1" min="-2" max="-2" attributes="0"/>
                                                   <EmptySpace type="unrelated" max="-2" attributes="0"/>
@@ -327,7 +335,7 @@
                                               </Group>
                                           </Group>
                                           <Group type="103" groupAlignment="0" attributes="0">
-                                              <Component id="telorButton" min="-2" pref="100" max="-2" attributes="0"/>
+                                              <Component id="rbTelor" min="-2" pref="100" max="-2" attributes="0"/>
                                               <Group type="102" alignment="0" attributes="0">
                                                   <EmptySpace type="separate" max="-2" attributes="0"/>
                                                   <Component id="jCheckBox3" min="-2" max="-2" attributes="0"/>
@@ -341,7 +349,7 @@
                               <Group type="102" alignment="0" attributes="0">
                                   <Component id="jLabel11" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace max="-2" attributes="0"/>
-                                  <Component id="subtotField" min="-2" pref="102" max="-2" attributes="0"/>
+                                  <Component id="txtSubTotal" min="-2" pref="102" max="-2" attributes="0"/>
                                   <EmptySpace max="32767" attributes="0"/>
                                   <Component id="simpanButton" min="-2" max="-2" attributes="0"/>
                                   <EmptySpace min="-2" pref="83" max="-2" attributes="0"/>
@@ -356,12 +364,12 @@
                           <EmptySpace min="-2" pref="25" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel6" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="manisButton" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="telorButton" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbManis" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="rbTelor" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="unrelated" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="jComboBox1" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="cmbBase" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel7" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace type="separate" max="-2" attributes="0"/>
@@ -388,7 +396,7 @@
                                   <Group type="103" groupAlignment="3" attributes="0">
                                       <Component id="jLabel11" alignment="3" min="-2" max="-2" attributes="0"/>
                                       <Component id="jLabel10" alignment="3" min="-2" max="-2" attributes="0"/>
-                                      <Component id="subtotField" alignment="3" min="-2" max="-2" attributes="0"/>
+                                      <Component id="txtSubTotal" alignment="3" min="-2" max="-2" attributes="0"/>
                                   </Group>
                                   <EmptySpace pref="38" max="32767" attributes="0"/>
                               </Group>
@@ -408,7 +416,7 @@
                     <Property name="text" type="java.lang.String" value="Jenis Martabak"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JRadioButton" name="manisButton">
+                <Component class="javax.swing.JRadioButton" name="rbManis">
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="jenis"/>
@@ -416,7 +424,7 @@
                     <Property name="text" type="java.lang.String" value="Manis"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JRadioButton" name="telorButton">
+                <Component class="javax.swing.JRadioButton" name="rbTelor">
                   <Properties>
                     <Property name="buttonGroup" type="javax.swing.ButtonGroup" editor="org.netbeans.modules.form.RADComponent$ButtonGroupPropertyEditor">
                       <ComponentRef name="jenis"/>
@@ -429,7 +437,7 @@
                     <Property name="text" type="java.lang.String" value="Base:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JComboBox" name="jComboBox1">
+                <Component class="javax.swing.JComboBox" name="cmbBase">
                   <Properties>
                     <Property name="model" type="javax.swing.ComboBoxModel" editor="org.netbeans.modules.form.editors2.ComboBoxModelEditor">
                       <StringArray count="4">
@@ -501,7 +509,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTextArea" name="jTextArea3">
+                    <Component class="javax.swing.JTextArea" name="txtCatatanItem">
                       <Properties>
                         <Property name="columns" type="int" value="20"/>
                         <Property name="rows" type="int" value="5"/>
@@ -519,7 +527,7 @@
                     <Property name="text" type="java.lang.String" value="Rp"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="subtotField">
+                <Component class="javax.swing.JTextField" name="txtSubTotal">
                 </Component>
                 <Component class="javax.swing.JButton" name="simpanButton">
                   <Properties>
@@ -561,7 +569,7 @@
 
                   <Layout class="org.netbeans.modules.form.compat2.layouts.support.JScrollPaneSupportLayout"/>
                   <SubComponents>
-                    <Component class="javax.swing.JTable" name="daftarPesan">
+                    <Component class="javax.swing.JTable" name="tblKeranjang">
                       <Properties>
                         <Property name="model" type="javax.swing.table.TableModel" editor="org.netbeans.modules.form.editors2.TableModelEditor">
                           <Table columnCount="5" rowCount="4">
@@ -607,9 +615,9 @@
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="0" max="-2" attributes="0">
-                              <Component id="totalField" pref="144" max="32767" attributes="0"/>
-                              <Component id="ongkirField" max="32767" attributes="0"/>
-                              <Component id="subtotalField" max="32767" attributes="0"/>
+                              <Component id="txtTotal" pref="144" max="32767" attributes="0"/>
+                              <Component id="txtOngkir" max="32767" attributes="0"/>
+                              <Component id="txtSubtotal" max="32767" attributes="0"/>
                           </Group>
                           <EmptySpace max="32767" attributes="0"/>
                       </Group>
@@ -621,18 +629,18 @@
                           <EmptySpace min="-2" max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
                               <Component id="jLabel12" alignment="3" min="-2" max="-2" attributes="0"/>
-                              <Component id="subtotalField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtSubtotal" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel13" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="ongkirField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtOngkir" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel14" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel15" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
                           <EmptySpace max="-2" attributes="0"/>
                           <Group type="103" groupAlignment="3" attributes="0">
-                              <Component id="totalField" alignment="3" min="-2" max="-2" attributes="0"/>
+                              <Component id="txtTotal" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel16" alignment="3" min="-2" max="-2" attributes="0"/>
                               <Component id="jLabel17" alignment="3" min="-2" max="-2" attributes="0"/>
                           </Group>
@@ -647,9 +655,9 @@
                     <Property name="text" type="java.lang.String" value="Subtotal:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="subtotalField">
+                <Component class="javax.swing.JTextField" name="txtSubtotal">
                   <Events>
-                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="subtotalFieldActionPerformed"/>
+                    <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="txtSubtotalActionPerformed"/>
                   </Events>
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel13">
@@ -657,7 +665,7 @@
                     <Property name="text" type="java.lang.String" value="Rp"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="ongkirField">
+                <Component class="javax.swing.JTextField" name="txtOngkir">
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel14">
                   <Properties>
@@ -669,7 +677,7 @@
                     <Property name="text" type="java.lang.String" value="Ongkir:"/>
                   </Properties>
                 </Component>
-                <Component class="javax.swing.JTextField" name="totalField">
+                <Component class="javax.swing.JTextField" name="txtTotal">
                 </Component>
                 <Component class="javax.swing.JLabel" name="jLabel16">
                   <Properties>
@@ -683,12 +691,12 @@
                 </Component>
               </SubComponents>
             </Container>
-            <Component class="javax.swing.JButton" name="selesaiButton">
+            <Component class="javax.swing.JButton" name="btnSelesai">
               <Properties>
                 <Property name="text" type="java.lang.String" value="Selesai"/>
               </Properties>
               <Events>
-                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="selesaiButtonActionPerformed"/>
+                <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSelesaiActionPerformed"/>
               </Events>
             </Component>
           </SubComponents>
